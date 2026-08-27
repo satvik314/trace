@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Trace</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Capture: the open notebook line -->
+  <section id="capture" class="view">
+    <header class="capture-head">
+      <span id="capture-date" class="datehead"></span>
+    </header>
+
+    <div class="capture-line">
+      <input id="capture-input" type="text" autocomplete="off" spellcheck="false"
+             placeholder="what are you trying?" aria-label="Log entry">
+    </div>
+
+    <p id="capture-context" class="context-hint" hidden></p>
+
+    <footer class="foot">
+      <button id="to-trail" class="quiet-link" type="button">the trail&thinsp;&rarr;</button>
+      <span class="key-hint">&crarr;&nbsp;logs</span>
+    </footer>
+  </section>
+
+  <!-- Trail: the day's page -->
+  <section id="trail" class="view" hidden>
+    <header class="trail-head">
+      <button id="day-prev" class="day-arrow" type="button" aria-label="Previous day">&lsaquo;</button>
+      <span id="trail-date" class="datehead"></span>
+      <button id="day-next" class="day-arrow" type="button" aria-label="Next day">&rsaquo;</button>
+    </header>
+
+    <p id="proof" class="proof"></p>
+
+    <div id="entries" class="entries"></div>
+
+    <div id="trail-capture" class="capture-line trail-line" hidden>
+      <input id="trail-input" type="text" autocomplete="off" spellcheck="false"
+             placeholder="" aria-label="Log entry">
+    </div>
+
+    <footer class="foot">
+      <button id="to-capture" class="quiet-link" type="button">&larr;&thinsp;log</button>
+    </footer>
+  </section>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Trace",
+  "version": "1.0.0",
+  "description": "A personal lab logbook. Log what you're trying in under three seconds; the trail proves the day was full of work.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Trace — log an entry"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+L",
+        "mac": "Command+Shift+L"
+      },
+      "description": "Open Trace and start logging"
+    }
+  },
+  "permissions": ["storage", "activeTab"],
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

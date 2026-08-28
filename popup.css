@@ -1,0 +1,272 @@
+/* Trace — a field journal, not a dashboard.
+   One accent (botanical green), used only for the timestamp rail
+   and the day's proof line. Everything else is ink on paper. */
+
+:root {
+  --paper:      #f5eee0;
+  --ink:        #241f17;
+  --ink-soft:   #6f6656;
+  --ink-faint:  #a2977f;
+  --accent:     #34603f;
+  --rule:       rgba(36, 31, 23, 0.22);
+  --rule-faint: rgba(36, 31, 23, 0.12);
+  --grain-blend: multiply;
+  --grain-opacity: 0.05;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper:      #26201a;
+    --ink:        #eee3cd;
+    --ink-soft:   #a89b82;
+    --ink-faint:  #776c58;
+    --accent:     #93b89c;
+    --rule:       rgba(238, 227, 205, 0.22);
+    --rule-faint: rgba(238, 227, 205, 0.10);
+    --grain-blend: screen;
+    --grain-opacity: 0.04;
+  }
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  width: 340px;
+  background: var(--paper);
+}
+
+body {
+  font-family: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua',
+               Palatino, Georgia, 'Times New Roman', serif;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+/* faint paper grain over everything */
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: var(--grain-blend);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/></filter><rect width='140' height='140' filter='url(%23n)'/></svg>");
+}
+
+.view { padding: 18px 20px 12px; }
+
+/* ---------- date headers: small caps, quietly serious ---------- */
+
+.datehead {
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.14em;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+/* ---------- capture: the open notebook line ---------- */
+
+.capture-head { margin-bottom: 22px; }
+
+.capture-line input {
+  width: 100%;
+  font: inherit;
+  font-size: 16px;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--rule);
+  border-radius: 0;
+  padding: 2px 1px 7px;
+  caret-color: var(--ink);
+  outline: none;
+}
+
+.capture-line input::placeholder {
+  color: var(--ink-faint);
+  font-style: italic;
+}
+
+.context-hint {
+  margin-top: 10px;
+  font-size: 11.5px;
+  font-style: italic;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- footers ---------- */
+
+.foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 26px;
+}
+
+.quiet-link {
+  font: inherit;
+  font-size: 12.5px;
+  font-style: italic;
+  color: var(--ink-soft);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.quiet-link:hover { color: var(--ink); }
+
+.key-hint {
+  font-family: 'SF Mono', ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
+  font-size: 10px;
+  color: var(--ink-faint);
+}
+
+/* ---------- trail: the day's page ---------- */
+
+.trail-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 4px;
+}
+
+.day-arrow {
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--ink-soft);
+  background: none;
+  border: none;
+  padding: 0 6px;
+  cursor: pointer;
+}
+
+.day-arrow:hover:not(:disabled) { color: var(--ink); }
+
+.day-arrow:disabled {
+  color: transparent;
+  cursor: default;
+}
+
+/* the one calm line of proof — accent, centred, then a hairline rule */
+.proof {
+  text-align: center;
+  font-size: 12px;
+  font-style: italic;
+  color: var(--accent);
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule-faint);
+  margin-bottom: 4px;
+}
+
+.entries {
+  max-height: 330px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule-faint) transparent;
+}
+
+/* entry row: mono timestamp rail down the left margin, ruled off
+   from the entry text like a logbook margin */
+.entry {
+  position: relative;
+  display: grid;
+  grid-template-columns: 46px 1fr;
+  column-gap: 12px;
+  padding: 8px 0 7px;
+}
+
+.entry + .entry { border-top: 1px solid var(--rule-faint); }
+
+.entry-time {
+  font-family: 'SF Mono', ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.03em;
+  color: var(--accent);
+  text-align: right;
+  padding-top: 3.5px;
+  padding-right: 12px;
+  border-right: 1px solid var(--rule-faint);
+}
+
+.entry-body { min-width: 0; padding-right: 14px; }
+
+.entry-text {
+  font-size: 14.5px;
+  overflow-wrap: break-word;
+}
+
+.entry-ctx {
+  margin-top: 2px;
+  font-size: 11px;
+  font-style: italic;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* delete on hover — the only edit there is */
+.entry-delete {
+  position: absolute;
+  top: 7px;
+  right: 0;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--ink-faint);
+  background: none;
+  border: none;
+  padding: 2px 3px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+
+.entry:hover .entry-delete { opacity: 1; }
+.entry-delete:hover { color: var(--ink); }
+
+/* a fresh entry settles in like ink drying */
+.entry.settle {
+  animation: settle 560ms cubic-bezier(0.22, 0.7, 0.35, 1) both;
+}
+
+@keyframes settle {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+    filter: blur(0.7px);
+  }
+  60% { filter: blur(0.25px); }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+/* the next blank ruled line at the foot of today's page */
+.trail-line { margin-top: 10px; }
+
+.trail-line input {
+  font-size: 14.5px;
+  padding-left: 58px;
+}
+
+/* empty page */
+.empty {
+  padding: 30px 0 22px;
+  text-align: center;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ink-faint);
+}

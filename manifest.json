@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Trace",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A personal lab logbook. Log what you're trying in under three seconds; the trail proves the day was full of work.",
   "action": {
     "default_popup": "popup.html",

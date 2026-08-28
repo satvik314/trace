@@ -12,17 +12,24 @@
   <section id="capture" class="view">
     <header class="capture-head">
       <span id="capture-date" class="datehead"></span>
+      <span id="capture-no" class="entry-no"></span>
     </header>
 
-    <div class="capture-line">
-      <input id="capture-input" type="text" autocomplete="off" spellcheck="false"
-             placeholder="what are you trying?" aria-label="Log entry">
+    <div class="page page-capture">
+      <div class="line-row">
+        <span id="capture-clock" class="margin-time"></span>
+        <input id="capture-input" type="text" autocomplete="off" spellcheck="false"
+               placeholder="what are you trying?" aria-label="Log entry">
+      </div>
     </div>
 
     <p id="capture-context" class="context-hint" hidden></p>
 
     <footer class="foot">
-      <button id="to-trail" class="quiet-link" type="button">the trail&thinsp;&rarr;</button>
+      <span class="foot-links">
+        <button id="to-trail" class="quiet-link" type="button">the trail&thinsp;&rarr;</button>
+        <button id="to-index" class="quiet-link" type="button">index</button>
+      </span>
       <span class="key-hint">&crarr;&nbsp;logs</span>
     </footer>
   </section>
@@ -31,23 +38,75 @@
   <section id="trail" class="view" hidden>
     <header class="trail-head">
       <button id="day-prev" class="day-arrow" type="button" aria-label="Previous day">&lsaquo;</button>
-      <span id="trail-date" class="datehead"></span>
+      <button id="trail-date" class="datehead datehead-btn" type="button"
+              title="Jump to today"></button>
       <button id="day-next" class="day-arrow" type="button" aria-label="Next day">&rsaquo;</button>
     </header>
 
     <p id="proof" class="proof"></p>
 
-    <div id="entries" class="entries"></div>
-
-    <div id="trail-capture" class="capture-line trail-line" hidden>
-      <input id="trail-input" type="text" autocomplete="off" spellcheck="false"
-             placeholder="" aria-label="Log entry">
+    <div id="trail-page" class="page page-trail">
+      <div id="entries" class="entries"></div>
+      <div id="trail-capture" class="line-row trail-line" hidden>
+        <span id="trail-clock" class="margin-time"></span>
+        <input id="trail-input" type="text" autocomplete="off" spellcheck="false"
+               placeholder="" aria-label="Log entry">
+      </div>
     </div>
 
     <footer class="foot">
-      <button id="to-capture" class="quiet-link" type="button">&larr;&thinsp;log</button>
+      <span class="foot-links">
+        <button id="to-capture" class="quiet-link" type="button">&larr;&thinsp;log</button>
+        <button id="to-search" class="quiet-link" type="button">search</button>
+        <button id="to-index-2" class="quiet-link" type="button">index</button>
+      </span>
+      <button id="copy-day" class="quiet-link" type="button">copy day</button>
     </footer>
   </section>
+
+  <!-- Search: leafing back through every page -->
+  <section id="search" class="view" hidden>
+    <header class="capture-head">
+      <span class="datehead">search the notebook</span>
+    </header>
+
+    <div class="page page-capture">
+      <div class="line-row">
+        <span class="margin-glyph" aria-hidden="true">&#8981;</span>
+        <input id="search-input" type="text" autocomplete="off" spellcheck="false"
+               placeholder="a word, a #tag, a domain&hellip;" aria-label="Search entries">
+      </div>
+    </div>
+
+    <div id="search-results" class="results"></div>
+
+    <footer class="foot">
+      <button id="search-back" class="quiet-link" type="button">&larr;&thinsp;back</button>
+      <span id="search-count" class="key-hint"></span>
+    </footer>
+  </section>
+
+  <!-- Index: the notebook's front matter -->
+  <section id="index" class="view" hidden>
+    <header class="capture-head">
+      <span class="datehead">index</span>
+    </header>
+
+    <div id="stats" class="stats"></div>
+
+    <div id="day-list" class="day-list"></div>
+
+    <footer class="foot">
+      <button id="index-back" class="quiet-link" type="button">&larr;&thinsp;back</button>
+      <button id="copy-all" class="quiet-link" type="button">copy everything</button>
+    </footer>
+  </section>
+
+  <!-- undo a deletion before the ink is gone for good -->
+  <div id="toast" class="toast" hidden>
+    <span>entry struck out</span>
+    <button id="undo" class="quiet-link undo-link" type="button">undo</button>
+  </div>
 
   <script src="popup.js"></script>
 </body>

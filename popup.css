@@ -1,28 +1,39 @@
 /* Trace — a field journal, not a dashboard.
-   One accent (botanical green), used only for the timestamp rail
-   and the day's proof line. Everything else is ink on paper. */
+   The trail is a real ruled page: a 24px line rhythm the text sits on,
+   a red margin rule, timestamps written into the margin. One botanical
+   accent for time and proof; everything else is ink on paper. */
 
 :root {
-  --paper:      #f5eee0;
-  --ink:        #241f17;
-  --ink-soft:   #6f6656;
-  --ink-faint:  #a2977f;
-  --accent:     #34603f;
-  --rule:       rgba(36, 31, 23, 0.22);
-  --rule-faint: rgba(36, 31, 23, 0.12);
+  --paper:       #f5eee0;
+  --ink:         #241f17;
+  --ink-soft:    #6f6656;
+  --ink-faint:   #a2977f;
+  --accent:      #34603f;
+  --margin-red:  rgba(178, 82, 71, 0.55);
+  --rule:        rgba(36, 31, 23, 0.22);
+  --rule-faint:  rgba(36, 31, 23, 0.12);
+  --rule-line:   rgba(97, 118, 153, 0.28);   /* the ruled feint lines */
+  --hilite:      rgba(52, 96, 63, 0.16);
+  --toast-bg:    #241f17;
+  --toast-ink:   #f5eee0;
   --grain-blend: multiply;
   --grain-opacity: 0.05;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper:      #26201a;
-    --ink:        #eee3cd;
-    --ink-soft:   #a89b82;
-    --ink-faint:  #776c58;
-    --accent:     #93b89c;
-    --rule:       rgba(238, 227, 205, 0.22);
-    --rule-faint: rgba(238, 227, 205, 0.10);
+    --paper:       #26201a;
+    --ink:         #eee3cd;
+    --ink-soft:    #a89b82;
+    --ink-faint:   #776c58;
+    --accent:      #93b89c;
+    --margin-red:  rgba(196, 107, 95, 0.5);
+    --rule:        rgba(238, 227, 205, 0.22);
+    --rule-faint:  rgba(238, 227, 205, 0.10);
+    --rule-line:   rgba(148, 168, 199, 0.2);
+    --hilite:      rgba(147, 184, 156, 0.22);
+    --toast-bg:    #eee3cd;
+    --toast-ink:   #26201a;
     --grain-blend: screen;
     --grain-opacity: 0.04;
   }
@@ -30,8 +41,10 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+[hidden] { display: none !important; }
+
 html {
-  width: 340px;
+  width: 380px;
   background: var(--paper);
 }
 
@@ -59,6 +72,15 @@ body {
 
 .view { padding: 18px 20px 12px; }
 
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
 /* ---------- date headers: small caps, quietly serious ---------- */
 
 .datehead {
@@ -68,27 +90,85 @@ body {
   color: var(--ink-soft);
 }
 
-/* ---------- capture: the open notebook line ---------- */
+.datehead-btn:hover { color: var(--ink); }
 
-.capture-head { margin-bottom: 22px; }
+.entry-no {
+  font-family: 'SF Mono', ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
+  font-size: 10px;
+  color: var(--ink-faint);
+}
 
-.capture-line input {
+/* ---------- the ruled page ----------
+   24px line rhythm. Feint lines are painted on the page container and
+   scroll with it (background-attachment: local); the red margin rule
+   runs down at 54px; text lives to its right, times to its left. */
+
+.page {
+  --line: 24px;
+  background-image:
+    linear-gradient(to right,
+      transparent 0 53px, var(--margin-red) 53px 54px, transparent 54px),
+    repeating-linear-gradient(to bottom,
+      transparent 0 calc(var(--line) - 1px),
+      var(--rule-line) calc(var(--line) - 1px) var(--line));
+  background-attachment: local, local;
+}
+
+.page-capture { margin-top: 14px; }
+
+/* the capture page runs on for two blank lines — an open notebook,
+   not a form field */
+#capture .page-capture { padding-bottom: 48px; }
+
+.page-trail {
+  max-height: 336px;             /* 14 ruled lines */
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule-faint) transparent;
+}
+
+/* one ruled line holding an input, time written in the margin */
+.line-row {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+}
+
+.line-row input {
   width: 100%;
   font: inherit;
-  font-size: 16px;
+  font-size: 14.5px;
+  line-height: var(--line);
+  height: var(--line);
   color: var(--ink);
   background: transparent;
   border: none;
-  border-bottom: 1px solid var(--rule);
   border-radius: 0;
-  padding: 2px 1px 7px;
+  padding: 0 2px 0 10px;
   caret-color: var(--ink);
   outline: none;
 }
 
-.capture-line input::placeholder {
+.line-row input::placeholder {
   color: var(--ink-faint);
   font-style: italic;
+}
+
+.margin-time {
+  font-family: 'SF Mono', ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.03em;
+  line-height: var(--line);
+  color: var(--ink-faint);
+  text-align: right;
+  padding-right: 9px;
+}
+
+.margin-glyph {
+  font-size: 13px;
+  line-height: var(--line);
+  color: var(--ink-faint);
+  text-align: right;
+  padding-right: 9px;
 }
 
 .context-hint {
@@ -107,18 +187,15 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-top: 26px;
+  margin-top: 22px;
 }
 
+.foot-links { display: flex; gap: 14px; align-items: baseline; }
+
 .quiet-link {
-  font: inherit;
   font-size: 12.5px;
   font-style: italic;
   color: var(--ink-soft);
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
 }
 
 .quiet-link:hover { color: var(--ink); }
@@ -140,14 +217,10 @@ body {
 }
 
 .day-arrow {
-  font-family: inherit;
   font-size: 16px;
   line-height: 1;
   color: var(--ink-soft);
-  background: none;
-  border: none;
   padding: 0 6px;
-  cursor: pointer;
 }
 
 .day-arrow:hover:not(:disabled) { color: var(--ink); }
@@ -157,77 +230,90 @@ body {
   cursor: default;
 }
 
-/* the one calm line of proof — accent, centred, then a hairline rule */
+/* the one calm line of proof — accent, centred, then the page begins */
 .proof {
   text-align: center;
   font-size: 12px;
   font-style: italic;
   color: var(--accent);
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--rule-faint);
-  margin-bottom: 4px;
+  padding-bottom: 10px;
+  margin-bottom: 2px;
 }
 
-.entries {
-  max-height: 330px;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--rule-faint) transparent;
-}
-
-/* entry row: mono timestamp rail down the left margin, ruled off
-   from the entry text like a logbook margin */
+/* entry row: sits directly on the ruled lines — no padding, every
+   height a multiple of the line rhythm */
 .entry {
   position: relative;
   display: grid;
-  grid-template-columns: 46px 1fr;
-  column-gap: 12px;
-  padding: 8px 0 7px;
+  grid-template-columns: 54px 1fr;
 }
-
-.entry + .entry { border-top: 1px solid var(--rule-faint); }
 
 .entry-time {
   font-family: 'SF Mono', ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
   font-size: 10.5px;
   letter-spacing: 0.03em;
+  line-height: var(--line);
   color: var(--accent);
   text-align: right;
-  padding-top: 3.5px;
-  padding-right: 12px;
-  border-right: 1px solid var(--rule-faint);
+  padding-right: 9px;
 }
 
-.entry-body { min-width: 0; padding-right: 14px; }
+.entry-body { min-width: 0; padding: 0 26px 0 10px; }
 
 .entry-text {
   font-size: 14.5px;
+  line-height: var(--line);
   overflow-wrap: break-word;
+  cursor: text;
 }
 
+/* a #tag written in the margin's red, clickable through to search */
+.tag {
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.tag:hover { text-decoration: underline; }
+
 .entry-ctx {
-  margin-top: 2px;
   font-size: 11px;
   font-style: italic;
+  line-height: var(--line);
   color: var(--ink-faint);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: block;
+  width: 100%;
+  text-align: left;
 }
 
-/* delete on hover — the only edit there is */
+button.entry-ctx:hover { color: var(--ink-soft); text-decoration: underline; }
+
+/* editing in place: same line, same ink, just a caret */
+.entry-edit {
+  width: 100%;
+  font: inherit;
+  font-size: 14.5px;
+  line-height: var(--line);
+  height: var(--line);
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  padding: 0;
+  caret-color: var(--ink);
+  outline: none;
+}
+
+/* delete on hover — striking a line out */
 .entry-delete {
   position: absolute;
-  top: 7px;
-  right: 0;
-  font-family: inherit;
+  top: 0;
+  right: 4px;
   font-size: 13px;
-  line-height: 1;
+  line-height: var(--line);
   color: var(--ink-faint);
-  background: none;
-  border: none;
-  padding: 2px 3px;
-  cursor: pointer;
+  padding: 0 3px;
   opacity: 0;
   transition: opacity 140ms ease;
 }
@@ -254,19 +340,188 @@ body {
   }
 }
 
-/* the next blank ruled line at the foot of today's page */
-.trail-line { margin-top: 10px; }
-
-.trail-line input {
-  font-size: 14.5px;
-  padding-left: 58px;
-}
-
 /* empty page */
 .empty {
-  padding: 30px 0 22px;
+  grid-column: 2;
+  padding: 24px 0;
   text-align: center;
   font-style: italic;
   font-size: 13px;
   color: var(--ink-faint);
 }
+
+/* ---------- search ---------- */
+
+.results {
+  margin-top: 14px;
+  max-height: 312px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule-faint) transparent;
+}
+
+.result-day {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.12em;
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin: 12px 0 2px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--rule-faint);
+}
+
+.result-day:first-child { margin-top: 0; }
+.result-day:hover { color: var(--ink); }
+
+.result {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  column-gap: 10px;
+  padding: 4px 0;
+  width: 100%;
+  text-align: left;
+}
+
+.result-time {
+  font-family: 'SF Mono', ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
+  font-size: 10.5px;
+  padding-top: 3px;
+  color: var(--accent);
+  text-align: right;
+}
+
+.result-text {
+  font-size: 13.5px;
+  overflow-wrap: break-word;
+}
+
+.result-text mark {
+  background: var(--hilite);
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+.results .empty { padding: 20px 0; }
+
+/* ---------- index ---------- */
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 18px;
+  margin: 14px 2px 6px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule-faint);
+}
+
+.stat { display: flex; align-items: baseline; gap: 8px; }
+
+.stat-value {
+  font-family: 'SF Mono', ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
+  font-size: 16px;
+  color: var(--accent);
+}
+
+.stat-label {
+  font-size: 11.5px;
+  font-style: italic;
+  color: var(--ink-soft);
+}
+
+.day-list {
+  margin-top: 6px;
+  max-height: 288px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule-faint) transparent;
+}
+
+.day-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+  padding: 7px 2px;
+}
+
+.day-row + .day-row { border-top: 1px solid var(--rule-faint); }
+
+.day-row:hover .day-row-date { color: var(--ink); }
+
+.day-row-date {
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.12em;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+/* tally marks: four strokes and the fifth struck through */
+.tallies { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+
+.tally {
+  position: relative;
+  display: inline-flex;
+  gap: 2.5px;
+  height: 11px;
+}
+
+.tally i {
+  display: inline-block;
+  width: 1.5px;
+  height: 11px;
+  background: var(--ink-soft);
+  border-radius: 1px;
+}
+
+.tally.five::after {
+  content: '';
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  top: 4.5px;
+  height: 1.5px;
+  background: var(--ink-soft);
+  border-radius: 1px;
+  transform: rotate(-24deg);
+}
+
+.tally-overflow {
+  font-family: 'SF Mono', ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
+  font-size: 10.5px;
+  color: var(--ink-soft);
+}
+
+/* ---------- toast: undo before the ink dries ---------- */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  background: var(--toast-bg);
+  color: var(--toast-ink);
+  font-size: 12px;
+  font-style: italic;
+  padding: 6px 14px;
+  border-radius: 3px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+.undo-link {
+  color: inherit;
+  font-style: italic;
+  text-decoration: underline;
+}
+
+.undo-link:hover { opacity: 0.8; }
